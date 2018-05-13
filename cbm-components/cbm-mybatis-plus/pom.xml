@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <artifactId>cbm-components</artifactId>
+        <groupId>com.bat.man</groupId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>cbm-mybatis-plus</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <mybatis-plus-version>2.2.0</mybatis-plus-version>
+    </properties>
+
+    <dependencies>
+        <!-- mysql-connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <!--mybatis-plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis-plus-version}</version>
+        </dependency>
+    </dependencies>
+</project>

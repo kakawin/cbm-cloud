@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.9.RELEASE</version>
+    </parent>
+
+    <groupId>com.bat.man</groupId>
+    <artifactId>cbm</artifactId>
+    <version>1.0.0</version>
+    <name>cbm-springcloud</name>
+    <description>SpringCloud Maven Project With Stateless Jwt, RSA Auth, Spring Security, Mybatis Plus, SpringBoot Admin</description>
+
+    <modules>
+        <module>cbm-components</module>
+        <module>cbm-ms-enterprise</module>
+        <module>cbm-ms-message</module>
+        <module>cbm-ms-resource</module>
+        <module>cbm-ms-system</module>
+        <module>cbm-server-config</module>
+        <module>cbm-server-discovery</module>
+        <module>cbm-server-gateway</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <cbm-version>1.0.0</cbm-version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>Edgware.SR3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
