@@ -1,4 +1,4 @@
-# cbm-springcloud
+# cbm-cloud
 
 #### 项目介绍
 SpringCloud Maven Project With Stateless Jwt, RSA Auth, Spring Security, Mybatis Plus, SpringBoot Admin
