@@ -4,22 +4,20 @@ import com.bat.man.cbm.jwt.JwtUser;
 import com.bat.man.cbm.jwt.JwtUtil;
 import com.bat.man.cbm.rsa.RSAPublicKey;
 import com.bat.man.cbm.rsa.service.RSAKeyService;
+import com.bat.man.cbm.security.domain.AuthUser;
 import com.bat.man.cbm.security.exception.PasswordException;
 import com.bat.man.cbm.security.exception.SignatureException;
 import com.bat.man.cbm.security.exception.UsernameException;
+import com.bat.man.cbm.security.util.PasswordManager;
 import com.bat.man.cbm.system.domain.User;
-import com.bat.man.cbm.system.domain.dto.JwtDto;
-import com.bat.man.cbm.system.domain.dto.LoginUserDto;
+import com.bat.man.cbm.system.domain.dto.JwtObject;
+import com.bat.man.cbm.system.domain.dto.LoginRequest;
 import com.bat.man.cbm.system.service.UserService;
-import com.bat.man.cbm.system.util.PasswordManager;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,44 +29,48 @@ public class AuthController {
     @Autowired
     RSAKeyService rsaKeyService;
 
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     ResponseEntity<Boolean> logout() {
         return ResponseEntity.ok()
-                .header("Set-Cookie", JwtUtil.JWT_COOKIE_NAME + "=; Path=/; Max-Age=0; HttpOnly")
+                .header("Set-Cookie", JwtUtil.getExpiredJwtCookie())
                 .body(true);
     }
 
-    @GetMapping("/loginKey")
-    ResponseEntity<RSAPublicKey> loginKey() throws Exception {
+    @GetMapping("/getPublicKey")
+    ResponseEntity<RSAPublicKey> getPublicKey() throws Exception {
         RSAPublicKey publicKey = rsaKeyService.getPublicKey();
         return ResponseEntity.ok(publicKey);
     }
 
     @PostMapping("/login")
-    ResponseEntity<JwtDto> login(LoginUserDto loginUserDto) {
-        LoginUserDto loginUser;
+    ResponseEntity<JwtObject> login(LoginRequest loginRequest) {
+        LoginRequest loginUser;
         try {
-            String decryptJson = rsaKeyService.decrypt(loginUserDto.getUsername(), loginUserDto.getPassword());
-            loginUser = new ObjectMapper().readValue(decryptJson, new TypeReference<LoginUserDto>() {
+            String decryptJson = rsaKeyService.decrypt(loginRequest.getUsername(), loginRequest.getPassword());
+            loginUser = new ObjectMapper().readValue(decryptJson, new TypeReference<LoginRequest>() {
             });
-            loginUser.setReme(loginUserDto.isReme());
+            loginUser.setReme(loginRequest.isReme());
         } catch (Exception e) {
             throw new SignatureException("登陆签名验证失败");
         }
-        User dbUser = userService.getOneByUsername(loginUser.getUsername());
-        if (dbUser == null) {
+        User user = userService.getOneByUsername(loginUser.getUsername());
+        if (user == null) {
             throw new UsernameException("帐号或密码错误");
         }
-        if (!PasswordManager.matches(loginUser.getPassword(), dbUser.getPassword())) {
+        if (!PasswordManager.matches(loginUser.getPassword(), user.getPassword())) {
             throw new PasswordException("帐号或密码错误");
         }
-        JwtUser jwtUser = new JwtUser(dbUser.getId(), dbUser.getUsername(), dbUser.getNickname(), new String[]{"system-user-view"});
+        JwtUser jwtUser = new JwtUser(user.getId(), user.getUsername(), user.getNickname(), new String[]{AuthUser.ROLE_ADMIN});
         String jwt = JwtUtil.createJwt(jwtUser, loginUser.isReme());
 
-        long maxAge = (loginUser.isReme() ? JwtUtil.JWT_REMEMBER_ME_EXPIRATION_MILLIS : JwtUtil.JWT_DEFAULT_EXPIRATION_MILLIS) / 1000;
         return ResponseEntity.ok()
-                .header("Set-Cookie", JwtUtil.JWT_COOKIE_NAME + "=" + jwt + "; Path=/; Max-Age=" + maxAge + "; HttpOnly")
-                .body(new JwtDto(jwt));
+                .header("Set-Cookie", JwtUtil.getJwtCookie(jwt, loginUser.isReme()))
+                .body(new JwtObject(jwt));
+    }
+
+    @PostMapping("/password")
+    ResponseEntity<String> password(@RequestParam String password) {
+        return ResponseEntity.ok(PasswordManager.encode(password));
     }
 
 }

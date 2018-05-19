@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>JSEncrypt</title>
+</head>
+<body>
+keyId:<input type="text" id="keyId"/><br>
+publicKey:<input type="text" id="publicKey"/><br>
+original username:<input type="text" id="originalusername" value="admin"/><br>
+original password:<input type="text" id="originalpassword" value="admin"/><br>
+<input type="button" onclick="encrypt()" value="加密"/><br>
+username:<textarea id="username"></textarea><br>
+password:<textarea id="password"></textarea><br>
+</body>
+<script src="jsencrypt.min.js"></script>
+<script>
+    function encrypt() {
+        var jsEncrypt = new JSEncrypt();
+        var keyId = document.getElementById('keyId').value;
+        var publicKey = document.getElementById('publicKey').value;
+        var originalusername = document.getElementById('originalusername').value;
+        var originalpassword = document.getElementById('originalpassword').value;
+        jsEncrypt.setPublicKey(publicKey);
+        var encrypted = jsEncrypt.encrypt(JSON.stringify({username: originalusername, password: originalpassword}));
+        document.getElementById('username').value = keyId;
+        document.getElementById('password').value = encrypted;
+    }
+</script>
+</html>

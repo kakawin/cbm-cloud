@@ -2,6 +2,8 @@ package com.bat.man.cbm.security.filter;
 
 import com.bat.man.cbm.jwt.JwtUser;
 import com.bat.man.cbm.jwt.JwtUtil;
+import com.bat.man.cbm.security.domain.AuthUser;
+import com.bat.man.cbm.security.util.AuthUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
@@ -10,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,7 +22,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SystemJwtAuthorizationFilter extends OncePerRequestFilter {
 
@@ -43,18 +46,23 @@ public class SystemJwtAuthorizationFilter extends OncePerRequestFilter {
                 JwtUser jwtUser = JwtUtil.getJwtUser(claims);
                 if (jwtUser != null && jwtUser.getAuths() != null) {
                     String[] auths = jwtUser.getAuths();
-                    List<GrantedAuthority> authorities = new ArrayList<>();
+                    Set<String> authSet = new LinkedHashSet<>();
                     for (String auth : auths) {
-                        GrantedAuthority authority = new SimpleGrantedAuthority(auth);
-                        authorities.add(authority);
+                        if (auth != null && auth.length() > 0) {
+                            authSet.add(auth);
+                        }
                     }
-                    User user = new User(jwtUser.getUsername(), jwtUser.getUsername(), authorities);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    List<GrantedAuthority> authorities = new ArrayList<>();
+                    for (String auth : authSet) {
+                        authorities.add(new SimpleGrantedAuthority(auth));
+                    }
+                    AuthUser authUser = new AuthUser(jwtUser, JwtUtil.isRememberMe(claims));
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(authUser, jwt, authorities);
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    AuthUtil.setAuth(authentication);
                 }
                 if (JwtUtil.isTimeToRefresh(claims)) {
-                    response.setHeader("Set-Cookie", JwtUtil.JWT_COOKIE_NAME + "=" + JwtUtil.refresh(jwt, true) + "; Path=/; HttpOnly");
+                    response.setHeader("Set-Cookie", JwtUtil.getJwtCookie(JwtUtil.refresh(jwt, true), JwtUtil.isRememberMe(claims)));
                 }
             }
         }

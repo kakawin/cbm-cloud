@@ -13,14 +13,11 @@
     <groupId>com.bat.man</groupId>
     <artifactId>cbm</artifactId>
     <version>1.0.0</version>
-    <name>cbm-springcloud</name>
+    <name>cbm-cloud</name>
     <description>SpringCloud Maven Project With Stateless Jwt, RSA Auth, Spring Security, Mybatis Plus, SpringBoot Admin</description>
 
     <modules>
         <module>cbm-components</module>
-        <module>cbm-ms-enterprise</module>
-        <module>cbm-ms-message</module>
-        <module>cbm-ms-resource</module>
         <module>cbm-ms-system</module>
         <module>cbm-server-config</module>
         <module>cbm-server-discovery</module>

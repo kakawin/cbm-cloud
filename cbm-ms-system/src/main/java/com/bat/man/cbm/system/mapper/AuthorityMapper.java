@@ -2,12 +2,13 @@ package com.bat.man.cbm.system.mapper;
 
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.bat.man.cbm.mybatis.plus.SuperMapper;
-import com.bat.man.cbm.system.domain.User;
+import com.bat.man.cbm.system.domain.Authority;
 
 import java.util.List;
 import java.util.Map;
 
-public interface UserMapper extends SuperMapper<User> {
+public interface AuthorityMapper extends SuperMapper<Authority> {
 
-    List<User> getAllByCondition(Pagination page, Map<String, Object> condition);
+    List<Authority> getAllByCondition(Pagination page, Map<String, Object> condition);
+
 }

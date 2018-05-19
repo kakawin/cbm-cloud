@@ -145,7 +145,7 @@ public abstract class JwtUtil {
         return new Date(created.getTime() + (isRememberMe ? JWT_REMEMBER_ME_EXPIRATION_MILLIS : JWT_DEFAULT_EXPIRATION_MILLIS));
     }
 
-    private static boolean isRememberMe(Claims claims) {
+    public static boolean isRememberMe(Claims claims) {
         return JWT_ISSUER_REMEMBER_ME.equals(claims.getIssuer());
     }
 
@@ -158,6 +158,15 @@ public abstract class JwtUtil {
             return true;
         }
         return false;
+    }
+
+    public static String getJwtCookie(String jwt, boolean isReme) {
+        long maxAge = (isReme ? JWT_REMEMBER_ME_EXPIRATION_MILLIS : JWT_DEFAULT_EXPIRATION_MILLIS) / 1000;
+        return JWT_COOKIE_NAME + "=" + jwt + "; Path=/; Max-Age=" + maxAge + "; HttpOnly";
+    }
+
+    public static String getExpiredJwtCookie() {
+        return JWT_COOKIE_NAME + "=; Path=/; Max-Age=0; HttpOnly";
     }
 
 }

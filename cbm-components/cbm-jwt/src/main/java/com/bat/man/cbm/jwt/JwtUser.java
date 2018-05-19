@@ -3,8 +3,8 @@ package com.bat.man.cbm.jwt;
 public class JwtUser {
 
     private String id;
-    private String nickname;
     private String username;
+    private String nickname;
     private String[] auths;
 
     public JwtUser() {
@@ -32,4 +32,5 @@ public class JwtUser {
     public String[] getAuths() {
         return auths;
     }
+
 }
