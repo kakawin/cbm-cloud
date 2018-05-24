@@ -15,6 +15,8 @@ import com.bat.man.cbm.system.domain.dto.LoginRequest;
 import com.bat.man.cbm.system.service.UserService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @Autowired
     UserService userService;
@@ -70,7 +74,9 @@ public class AuthController {
 
     @PostMapping("/password")
     ResponseEntity<String> password(@RequestParam String password) {
-        return ResponseEntity.ok(PasswordManager.encode(password));
+        String encoded = PasswordManager.encode(password);
+        logger.debug("{}====>{}", password, encoded);
+        return ResponseEntity.ok(encoded);
     }
 
 }

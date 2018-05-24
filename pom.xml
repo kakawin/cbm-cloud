@@ -22,6 +22,7 @@
         <module>cbm-server-config</module>
         <module>cbm-server-discovery</module>
         <module>cbm-server-gateway</module>
+        <module>cbm-server-logging</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -32,6 +33,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <cbm-version>1.0.0</cbm-version>
+        <spring-boot-admin-version>1.5.7</spring-boot-admin-version>
     </properties>
 
     <dependencyManagement>
